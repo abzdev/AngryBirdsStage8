@@ -5,16 +5,22 @@ const Constraint = Matter.Constraint;
 
 var engine, world;
 var box1, pig1,pig3;
-var backgroundImg,platform;
+var backgroundImg, backgroundImg2, platform;
 var bird, slingshot;
+var bg;
 
 var gameState = "onSling";
 
 function preload() {
-    backgroundImg = loadImage("sprites/bg.png");
+    if(getTime()) {
+        backgroundImg = loadImage('sprites/bg.png');
+    } else {
+        backgroundImg = loadImage('sprites/bg2.jpg');
+    }
 }
 
 function setup(){
+    getTime();
     var canvas = createCanvas(1200,400);
     engine = Engine.create();
     world = engine.world;
@@ -40,7 +46,6 @@ function setup(){
 
     bird = new Bird(200,50);
 
-    //log6 = new Log(230,180,80, PI/2);
     slingshot = new SlingShot(bird.body,{x:200, y:50});
 }
 
@@ -65,7 +70,6 @@ function draw(){
 
     bird.display();
     platform.display();
-    //log6.display();
     slingshot.display();    
 }
 
@@ -74,7 +78,6 @@ function mouseDragged(){
         Matter.Body.setPosition(bird.body, {x: mouseX , y: mouseY});
     }
 }
-
 
 function mouseReleased(){
     slingshot.fly();
@@ -85,4 +88,20 @@ function keyPressed(){
     if(keyCode === 32){
        // slingshot.attach(bird.body);
     }
+}
+
+async function getTime() {
+    var time = await fetch('https://worldtimeapi.org/api/timezone/America/Los_Angeles');
+    var timeJSON = await time.json();
+    var date = await timeJSON.datetime;
+    var hour = await date.slice(11,13);
+    
+    console.log(hour);
+    if(hour > 6 && hour < 19) {
+        return true;
+    } else {
+        return false;
+    }
+    //backgroundImg = loadImage(bg);
+    //console.log(backgroundImg);
 }
